@@ -1,4 +1,5 @@
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Feather, BarChart2 } from "lucide-react"
 
@@ -15,7 +16,16 @@ export default function Home() {
       </div>
 
       <div className="max-w-3xl w-full text-center space-y-12 relative z-10">
-        <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight">Momento Virtus</h1>
+        <div className="flex justify-center items-center">
+          <Image
+            src="/logo.png"
+            alt="Momento Virtus"
+            width={300}
+            height={100}
+            priority
+            className="h-auto"
+          />
+        </div>
 
         <p className="text-xl md:text-2xl font-serif italic text-stone-700 max-w-2xl mx-auto">
           "Ce n'est pas la mort qu'on redoute, mais de ne pas avoir vécu à hauteur de ses principes."
