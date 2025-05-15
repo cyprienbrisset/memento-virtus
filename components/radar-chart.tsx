@@ -41,6 +41,10 @@ export function RadarChart({ data, keys }: RadarChartProps) {
       return
     }
 
+    // Pour le debugging
+    console.log("Rendering radar chart with keys:", keys);
+    console.log("Data sample:", data[0]);
+
     // Clear previous chart
     d3.select(svgRef.current).selectAll("*").remove()
 
@@ -55,11 +59,16 @@ export function RadarChart({ data, keys }: RadarChartProps) {
       .append("g")
       .attr("transform", `translate(${width / 2}, ${height / 2})`)
 
-    // Create scales
-    const angleScale = d3
-      .scalePoint()
-      .domain(keys)
-      .range([0, 2 * Math.PI])
+    // Modified approach for angle scale to ensure equal spacing
+    // Au lieu d'utiliser scalePoint qui peut avoir des problèmes avec certaines distributions
+    const angleStep = (2 * Math.PI) / keys.length;
+    
+    // Créer une fonction d'échelle angulaire personnalisée
+    const angleScale = (key: string) => {
+      const index = keys.indexOf(key);
+      if (index === -1) return 0;
+      return index * angleStep;
+    };
 
     const radiusScale = d3.scaleLinear().domain([0, 5]).range([0, radius])
 
@@ -78,37 +87,37 @@ export function RadarChart({ data, keys }: RadarChartProps) {
     // Taille de police adaptative
     const fontSize = Math.max(8, Math.min(12, width / 35))
 
-    // Add axis labels
-    svg
-      .selectAll(".axis-label")
-      .data(keys)
-      .join("text")
-      .attr("class", "axis-label")
-      .attr("x", (d) => radiusScale(5.5) * Math.sin(angleScale(d) || 0))
-      .attr("y", (d) => radiusScale(5.5) * -Math.cos(angleScale(d) || 0))
-      .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "middle")
-      .attr("font-size", `${fontSize}px`)
-      .attr("fill", "#78716c")
-      .text((d) => d)
+    // Add axis labels and debug them
+    keys.forEach((key, i) => {
+      const angle = angleScale(key);
+      console.log(`Key ${key} at angle ${angle} radians (${angle * 180 / Math.PI} degrees)`);
+      
+      // Labels
+      svg.append("text")
+        .attr("class", "axis-label")
+        .attr("x", radiusScale(5.5) * Math.sin(angle))
+        .attr("y", radiusScale(5.5) * -Math.cos(angle))
+        .attr("text-anchor", "middle")
+        .attr("dominant-baseline", "middle")
+        .attr("font-size", `${fontSize}px`)
+        .attr("fill", "#78716c")
+        .text(key);
+      
+      // Axis lines
+      svg.append("line")
+        .attr("class", "axis-line")
+        .attr("x1", 0)
+        .attr("y1", 0)
+        .attr("x2", radius * Math.sin(angle))
+        .attr("y2", radius * -Math.cos(angle))
+        .attr("stroke", "#e5e5e5")
+        .attr("stroke-width", 1);
+    });
 
-    // Draw the axis lines
-    svg
-      .selectAll(".axis-line")
-      .data(keys)
-      .join("line")
-      .attr("class", "axis-line")
-      .attr("x1", 0)
-      .attr("y1", 0)
-      .attr("x2", (d) => radius * Math.sin(angleScale(d) || 0))
-      .attr("y2", (d) => radius * -Math.cos(angleScale(d) || 0))
-      .attr("stroke", "#e5e5e5")
-      .attr("stroke-width", 1)
-
-    // Create the radar path generator
+    // Create the radar path generator with the new angle scale
     const radarLine = d3
       .lineRadial<any>()
-      .angle((d) => angleScale(d.key) || 0)
+      .angle((d) => angleScale(d.key))
       .radius((d) => radiusScale(d.value))
       .curve(d3.curveLinearClosed)
 

@@ -72,7 +72,7 @@ export default function EcrirePage() {
           <textarea
             value={eulogy}
             onChange={(e) => setEulogy(e.target.value)}
-            className="eulogy-editor w-full font-serif text-base md:text-lg border-none focus:outline-none focus:ring-0 resize-none min-h-[250px] md:min-h-[300px]"
+            className="eulogy-editor w-full font-serif text-base md:text-lg border-none focus:outline-none focus:ring-0 resize-none min-h-[250px] md:min-h-[450px]"
             placeholder="Commencez à écrire votre éloge funèbre idéal..."
           />
         </div>
