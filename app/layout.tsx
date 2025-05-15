@@ -15,7 +15,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "YourEulogy.io | Réfléchir à sa vie à travers sa mort",
+  title: "Momento Virtus | Réfléchir à sa vie à travers sa mort",
   description: "Écrivez votre éloge funèbre idéal et alignez votre vie avec vos valeurs fondamentales",
     generator: 'v0.dev'
 }
