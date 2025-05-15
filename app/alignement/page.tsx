@@ -68,14 +68,33 @@ export default function AlignementPage() {
     const recentEntries = alignmentHistory.slice(-6)
 
     return recentEntries.map((entry) => {
-      const dataPoint: Record<string, number> = { date: new Date(entry.date).getTime() }
-
+      // Créer un objet avec la date et une valeur par défaut de 0 pour chaque clé
+      const dataPoint: Record<string, any> = { 
+        date: entry.date 
+      }
+      
+      // Initialiser toutes les clés à 0
+      selectedValues.forEach(key => {
+        dataPoint[key] = 0
+      })
+      
+      // Remplir avec les valeurs réelles si elles existent
       Object.entries(entry.values).forEach(([value, data]) => {
-        dataPoint[value] = data.score
+        if (selectedValues.includes(value)) {
+          dataPoint[value] = data.score
+        }
       })
 
       return dataPoint
     })
+  }
+
+  // Fonction pour mettre à jour un score spécifique
+  const updateScore = (value: string, newScore: number) => {
+    setCurrentScores(prev => ({
+      ...prev,
+      [value]: newScore
+    }))
   }
 
   return (
@@ -88,21 +107,21 @@ export default function AlignementPage() {
               <span className="sr-only">Retour</span>
             </Button>
           </Link>
-          <h1 className="text-2xl md:text-3xl font-serif ml-2">Alignement Mensuel</h1>
+          <h1 className="text-xl md:text-3xl font-serif ml-2 truncate">Alignement Mensuel</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div>
-            <h2 className="text-xl font-serif mb-4 text-stone-700">Évaluez votre alignement</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8">
+          <div className="order-1 md:order-1">
+            <h2 className="text-lg md:text-xl font-serif mb-4 text-stone-700">Évaluez votre alignement</h2>
 
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               {selectedValues.map((value) => (
                 <Card key={value} className="overflow-hidden">
-                  <CardContent className="p-4">
-                    <h3 className="font-medium text-lg mb-2">{value}</h3>
+                  <CardContent className="p-3 md:p-4">
+                    <h3 className="font-medium text-base md:text-lg mb-2">{value}</h3>
 
-                    <div className="mb-4">
-                      <p className="text-sm text-stone-500 mb-2">
+                    <div className="mb-3 md:mb-4">
+                      <p className="text-xs md:text-sm text-stone-500 mb-2">
                         Ai-je incarné cette valeur ce mois-ci ? ({currentScores[value] || 3}/5)
                       </p>
                       <Slider
@@ -110,12 +129,7 @@ export default function AlignementPage() {
                         min={1}
                         max={5}
                         step={1}
-                        onValueChange={(value) => {
-                          setCurrentScores({
-                            ...currentScores,
-                            [value]: value[0],
-                          })
-                        }}
+                        onValueChange={(newValues) => updateScore(value, newValues[0])}
                         className="mb-2"
                       />
                       <div className="flex justify-between text-xs text-stone-500">
@@ -125,7 +139,7 @@ export default function AlignementPage() {
                     </div>
 
                     <div>
-                      <p className="text-sm text-stone-500 mb-2">Exemples concrets (facultatif)</p>
+                      <p className="text-xs md:text-sm text-stone-500 mb-2">Exemples concrets (facultatif)</p>
                       <Textarea
                         value={currentComments[value] || ""}
                         onChange={(e) => {
@@ -135,7 +149,7 @@ export default function AlignementPage() {
                           })
                         }}
                         placeholder="Notez des exemples où vous avez incarné cette valeur..."
-                        className="resize-none h-24"
+                        className="resize-none h-16 md:h-24 text-sm"
                       />
                     </div>
                   </CardContent>
@@ -143,7 +157,7 @@ export default function AlignementPage() {
               ))}
             </div>
 
-            <div className="mt-6">
+            <div className="mt-4 md:mt-6">
               <Button
                 onClick={handleSaveAlignment}
                 className="w-full bg-stone-900 hover:bg-stone-800 flex items-center gap-2"
@@ -154,16 +168,16 @@ export default function AlignementPage() {
             </div>
           </div>
 
-          <div>
-            <h2 className="text-xl font-serif mb-4 text-stone-700">Votre évolution</h2>
+          <div className="order-2 md:order-2 mt-6 md:mt-0">
+            <h2 className="text-lg md:text-xl font-serif mb-4 text-stone-700">Votre évolution</h2>
 
             {alignmentHistory.length > 0 ? (
-              <div className="bg-white p-4 rounded-lg border border-stone-200 shadow-sm">
+              <div className="bg-white p-3 md:p-4 rounded-lg border border-stone-200 shadow-sm">
                 <RadarChart data={getChartData()} keys={selectedValues} />
               </div>
             ) : (
-              <div className="bg-white p-8 rounded-lg border border-stone-200 shadow-sm flex items-center justify-center">
-                <p className="text-stone-500 text-center">
+              <div className="bg-white p-6 md:p-8 rounded-lg border border-stone-200 shadow-sm flex items-center justify-center">
+                <p className="text-stone-500 text-center text-sm md:text-base">
                   Aucune donnée d'alignement disponible.
                   <br />
                   Enregistrez votre premier alignement pour voir votre évolution.
@@ -171,7 +185,7 @@ export default function AlignementPage() {
               </div>
             )}
 
-            <div className="mt-8">
+            <div className="mt-4 md:mt-8">
               <Link href="/grille">
                 <Button variant="outline" className="w-full">
                   Voir la grille d'alignement

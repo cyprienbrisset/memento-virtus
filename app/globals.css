@@ -106,3 +106,25 @@
 .memento-cell.unevaluated {
   @apply bg-stone-800;
 }
+
+/* Styles pour l'export PDF */
+#eulogy-pdf-template {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  width: 800px;
+  height: auto;
+  min-height: 1000px;
+  background-color: white;
+  z-index: -9999;
+  visibility: hidden;
+  overflow: visible;
+}
+
+#eulogy-pdf-template * {
+  visibility: visible;
+}
+
+#eulogy-pdf-template .whitespace-pre-wrap {
+  white-space: pre-wrap;
+}

@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <body className={`${playfair.variable} ${inter.variable} font-serif bg-stone-50 text-stone-900`}>
+      <body className={`${playfair.variable} ${inter.variable} font-serif bg-stone-50 text-stone-900`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="light" enableSystem={false} disableTransitionOnChange>
           {children}
         </ThemeProvider>
